@@ -8,6 +8,8 @@ Projekt przygotowany w oparciu o C# .NET 8.0 z WPF. Do połączenia z bazą wyko
 W repozytorium znajduje się plik Calculator.zip. Po rozpakowaniu go w folderze znajdziemy plik Calculator.exe, który uruchamia aplikację.
 
 ## Dokumentacja kodu
+
+
 ### Struktura folderów
 W głównym folderze projektu *Kalkulator* mamy główne pliki takie jak:
 - App.xaml/.xaml.cs - plik startowy aplikacji
@@ -19,6 +21,7 @@ W głównym folderze projektu *Kalkulator* mamy główne pliki takie jak:
 Dodatkowo wyróżniamy foldery:
 - Model - zawierający opis modeli bazy danych oraz kontekst bazy danych
 - Migrations - zawierający migracje bazy danych
+- database - folder tworzony podczas pierwszego uruchomienia aplikacji, w którym znajduje się plik z bazą danych
 
 ### Opis bazy danych
 Baza danych skłąda sięz 2 tabel:
