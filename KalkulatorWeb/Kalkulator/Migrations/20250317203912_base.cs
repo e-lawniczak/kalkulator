@@ -43,12 +43,22 @@ namespace Calculator.Migrations
                         principalTable: "Operators",
                         principalColumn: "OperatorId",
                         onDelete: ReferentialAction.Cascade);
-                });
+                }
+                
+                );
 
             migrationBuilder.CreateIndex(
                 name: "IX_Operations_OperatorId",
                 table: "Operations",
                 column: "OperatorId");
+
+            migrationBuilder.InsertData(table: "Operators", column: "Value", value: "+");
+            migrationBuilder.InsertData(table: "Operators", column: "Value", value: "-");
+            migrationBuilder.InsertData(table: "Operators", column: "Value", value: "*");
+            migrationBuilder.InsertData(table: "Operators", column: "Value", value: "/");
+            migrationBuilder.InsertData(table: "Operators", column: "Value", value: "frac");
+            migrationBuilder.InsertData(table: "Operators", column: "Value", value: "pow");
+            migrationBuilder.InsertData(table: "Operators", column: "Value", value: "sqrt");
         }
 
         /// <inheritdoc />

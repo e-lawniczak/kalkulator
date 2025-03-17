@@ -1,11 +1,12 @@
 ﻿
 using Calculator.Model;
 using Microsoft.EntityFrameworkCore;
-
+using static Calculator.Helpers;
 namespace Calculator
 {
     public class HistoryDb
     {
+        private string[] operators = { "+", "-", "*", "/", "frac", "pow", "sqrt" };
         public HistoryDb()
         {
         }
@@ -14,9 +15,9 @@ namespace Calculator
         {
             using (OperationHistoryContext db = new())
             {
-                var entries = await db.Operations.Include(o=>o.Operator).OrderByDescending(o => o.HistoryEntryId).Take(10).ToListAsync();
+                var entries = await db.Operations.Include(o => o.Operator).OrderByDescending(o => o.HistoryEntryId).Take(10).ToListAsync();
 
-                return string.Join("\n", entries.Select(e => $"{e.ValueA} {e.Operator.Value} {e.ValueB} = {e.Result}"));
+                return string.Join("\n", entries.Select(e => $"{RemoveZeros(e.ValueA.ToString(), true)} {e.Operator.Value} {RemoveZeros(e.ValueB.ToString(), true)} = {RemoveZeros(e.Result.ToString(), true)}"));
 
             }
         }
@@ -24,46 +25,50 @@ namespace Calculator
         {
             using (OperationHistoryContext db = new())
             {
-                var entry = new HistoryEntry
+                try
                 {
-                    ValueA = a,
-                    ValueB = b,
-                    Result = result,
-                    OperatorId = GetOpId(op),
-                    //Operator = new Operator
-                    //{
-                    //    OperatorId = GetOpId(op),
-                    //    Value = op,
-                    //}
-                };
-                db.Add(entry);
+                    var entry = new HistoryEntry
+                    {
+                        ValueA = a,
+                        ValueB = b,
+                        Result = result,
+                        OperatorId = GetOpId(op),
+                        //Operator = new Operator
+                        //{
+                        //    OperatorId = GetOpId(op),
+                        //    Value = op,
+                        //}
+                    };
+                    db.Add(entry);
+                    return await db.SaveChangesAsync();
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex.ToString());
+                    throw;
+                }
+            }
+        }
+        public async Task<int> FillData()
+        {
+            using (OperationHistoryContext db = new())
+            {
+                var opCount = await db.Operators.CountAsync();
+                if (opCount == 0)
+                    foreach (var item in operators)
+                    {
+                        db.Add(new Operator
+                        {
+                            OperatorId = GetOpId(item),
+                            Value = item
+                        });
+                    }
+
                 return await db.SaveChangesAsync();
             }
         }
 
-        private int GetOpId(string op)
-        {
-            return op switch
-            {
-                string when op == "+" => 1,
-                string when op == "-" => 2,
-                string when op == "*" => 3,
-                string when op == "/" => 4,
-                string when op == "frac" => 5,
-                string when op == "pow" => 6,
-                string when op == "sqrt" => 7,
-                _ => throw new InvalidOperationException()
 
-            };
-        }
     }
-    /*
-                 migrationBuilder.InsertData(table: "Operators", column: "Value", value: "+");
-            migrationBuilder.InsertData(table: "Operators", column: "Value", value: "-");
-            migrationBuilder.InsertData(table: "Operators", column: "Value", value: "*");
-            migrationBuilder.InsertData(table: "Operators", column: "Value", value: "/");
-            migrationBuilder.InsertData(table: "Operators", column: "Value", value: "frac");
-            migrationBuilder.InsertData(table: "Operators", column: "Value", value: "pow");
-            migrationBuilder.InsertData(table: "Operators", column: "Value", value: "sqrt");
-     */
+
 }

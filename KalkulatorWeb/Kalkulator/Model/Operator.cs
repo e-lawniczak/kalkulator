@@ -6,7 +6,7 @@ namespace Calculator.Model
     [Table("Operators")]
     public class Operator
     {
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        //[DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         [Key]
         public int OperatorId { get; set; }
         public string Value { get; set; }

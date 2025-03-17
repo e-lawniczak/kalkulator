@@ -19,6 +19,7 @@ namespace Calculator.Model
             Database.EnsureCreated();
         }
         public DbSet<HistoryEntry> Operations { get; set; }
+        public DbSet<Operator> Operators { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder options)
        => options.UseSqlite( $"Data Source={DbPath}");

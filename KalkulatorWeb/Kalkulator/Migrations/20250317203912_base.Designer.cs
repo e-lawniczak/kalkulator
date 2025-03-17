@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Calculator.Migrations
 {
     [DbContext(typeof(OperationHistoryContext))]
-    [Migration("20250317194642_base")]
+    [Migration("20250317203912_base")]
     partial class @base
     {
         /// <inheritdoc />
@@ -62,12 +62,17 @@ namespace Calculator.Migrations
             modelBuilder.Entity("Calculator.Model.HistoryEntry", b =>
                 {
                     b.HasOne("Calculator.Model.Operator", "Operator")
-                        .WithMany()
+                        .WithMany("historyEntries")
                         .HasForeignKey("OperatorId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Operator");
+                });
+
+            modelBuilder.Entity("Calculator.Model.Operator", b =>
+                {
+                    b.Navigation("historyEntries");
                 });
 #pragma warning restore 612, 618
         }

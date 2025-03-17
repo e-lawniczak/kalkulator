@@ -6,7 +6,7 @@ namespace Calculator.Model
     [Table("Operations")]
     public class HistoryEntry
     {
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        //[DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         [Key]
         public int HistoryEntryId { get; set; }
         public decimal? ValueA { get; set; }

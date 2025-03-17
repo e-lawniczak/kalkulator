@@ -9,7 +9,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
-
+using static Calculator.Helpers;
 namespace Calculator;
 
 /// <summary>
@@ -21,14 +21,16 @@ public partial class MainWindow : Window
     private decimal _previousValue = 0;
     private TextBlock _history;
     private string _operation = string.Empty;
-    private char COMMA = ',';
     private HistoryDb db;
+    private Operations calc;
 
     public MainWindow()
     {
         db = new HistoryDb();
         InitializeComponent();
+        calc = new Operations(ref Display);
         _history = (TextBlock)FindName("History");
+        FillInitialData();
         FillHistory();
     }
 
@@ -80,17 +82,17 @@ public partial class MainWindow : Window
             var tmpCurrent = _currentValue;
             _currentValue = _operation switch
             {
-                string o when o == "+" => Add(_previousValue, _currentValue),
-                string o when o == "-" => Subtract(_previousValue, _currentValue),
-                string o when o == "*" => Multiply(_previousValue, _currentValue),
-                string o when o == "/" => Divide(_previousValue, _currentValue),
+                string o when o == "+" => calc.Add(_previousValue, _currentValue),
+                string o when o == "-" => calc.Subtract(_previousValue, _currentValue),
+                string o when o == "*" => calc.Multiply(_previousValue, _currentValue),
+                string o when o == "/" => calc.Divide(_previousValue, _currentValue),
                 _ => _currentValue,
             };
             _previousValue = tmpCurrent;
-            Display.Text = RemoveZeros(_currentValue.ToString());
-            Task.Run(() => db.SaveOperation(tmpPrev, _previousValue, _operation, _currentValue));
+            CleanPrint();
+            SaveOperation(tmpPrev);
             FillHistory();
-            _operation = "eq";
+            OnClickFinish();
 
 
         }
@@ -98,8 +100,11 @@ public partial class MainWindow : Window
         {
             throw;
         }
-      
+
     }
+
+
+
     private void InPlaceOperation()
     {
         try
@@ -109,19 +114,20 @@ public partial class MainWindow : Window
 
             _currentValue = _operation switch
             {
-                string o when o == "frac" => FractionInverse(_currentValue),
-                string o when o == "pow" => Power(_currentValue),
-                string o when o == "sqrt" => Sqrt(_currentValue),
-                string o when o == "back" => Backspace(),
+                string o when o == "frac" => calc.FractionInverse(_currentValue),
+                string o when o == "pow" => calc.Power(_currentValue),
+                string o when o == "sqrt" => calc.Sqrt(_currentValue),
+                string o when o == "back" => calc.Backspace(),
                 _ => throw new NotImplementedException(),
             };
             _previousValue = tmpCurrent;
-            Display.Text = RemoveZeros(_currentValue.ToString());
+            CleanPrint();
+
             if (_operation != "back")
             {
-                Task.Run(() => db.SaveOperation(null, _previousValue, _operation, _currentValue));
+                SaveOperation();
                 FillHistory();
-                _operation = "eq";
+                OnClickFinish();
 
             }
         }
@@ -129,94 +135,37 @@ public partial class MainWindow : Window
         {
             throw;
         }
-   
+
     }
 
+    private void OnClickFinish()
+    {
+        _operation = "eq";
+    }
+
+    private async void SaveOperation(decimal? tmpPrev = null)
+    {
+        if (!string.IsNullOrEmpty(_operation) && !_operation.Equals("eq"))
+            await db.SaveOperation(tmpPrev, _previousValue, _operation, _currentValue);
+    }
+
+    private void CleanPrint()
+    {
+        Display.Text = RemoveZeros(_currentValue.ToString());
+
+    }
 
     private async void FillHistory()
     {
         _history.Text = db.LoadHistory().Result;
     }
-
-    private string RemoveZeros(string s)
+    private async void FillInitialData()
     {
-        decimal val = 0;
-        bool isdecimal = decimal.TryParse(s, out val);
-
-        if (s == "0" || s == string.Empty || s == null) return s;
-        if (s == COMMA.ToString()) return "0" + COMMA;
-        if (s.IndexOf(COMMA) == 1 && s.StartsWith('0')) return s;
-        if (val % 1 == 0) return s.TrimStart(['0', COMMA]);
-        return s.TrimStart('0');
+        HistoryDb db = new();
+        await db.FillData();
     }
 
-    private decimal Backspace()
-    {
-        if(Display.Text.Length <= 1)
-        {
-            Display.Text = "0";
-            return 0;
-        }
-        Display.Text = RemoveZeros(Display.Text.Remove(Display.Text.Length - 1));
-        bool NaN = true;
-        decimal res = 0;
-        NaN = !decimal.TryParse(Display.Text, out res);
-        return NaN ? 0 : res; //returns 0 to _currentValue if text is not a number, or returns new value otherwise
-    }
 
-    private decimal Sqrt(decimal a)
-    {
-        return (decimal)Math.Sqrt((double)a);
-    }
 
-    private decimal Power(decimal a)
-    {
-        return (decimal)Math.Pow((double)a, 2);
-    }
 
-    private decimal FractionInverse(decimal a)
-    {
-        if (a != 0)
-        {
-            return 1 / a;
-        }
-        else
-        {
-            Display.Text = "Can't divide by 0";
-            throw new NoZeroDivisionException();
-        }
-    }
-
-    private decimal Subtract(decimal a, decimal b)
-    {
-        return a - b;
-    }
-
-    private decimal Multiply(decimal a, decimal b)
-    {
-        return a * b;
-    }
-
-    private decimal Divide(decimal a, decimal b)
-    {
-        if (a != 0)
-        {
-            return a / b;
-        }
-        else
-        {
-            Display.Text = "Can't divide by 0";
-            throw new NoZeroDivisionException();
-        }
-    }
-
-    private decimal Add(decimal a, decimal b)
-    {
-        return a + b;
-    }
-
-    private void On_KeyDown(object sender, KeyEventArgs e)
-    {
-        e.Handled = false;
-    }
 }

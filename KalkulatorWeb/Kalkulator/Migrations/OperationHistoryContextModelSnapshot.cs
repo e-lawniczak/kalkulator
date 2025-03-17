@@ -59,12 +59,17 @@ namespace Calculator.Migrations
             modelBuilder.Entity("Calculator.Model.HistoryEntry", b =>
                 {
                     b.HasOne("Calculator.Model.Operator", "Operator")
-                        .WithMany()
+                        .WithMany("historyEntries")
                         .HasForeignKey("OperatorId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Operator");
+                });
+
+            modelBuilder.Entity("Calculator.Model.Operator", b =>
+                {
+                    b.Navigation("historyEntries");
                 });
 #pragma warning restore 612, 618
         }
