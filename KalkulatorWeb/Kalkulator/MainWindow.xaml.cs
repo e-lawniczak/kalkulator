@@ -19,13 +19,17 @@ public partial class MainWindow : Window
 {
     private decimal _currentValue = 0;
     private decimal _previousValue = 0;
+    private TextBlock _history;
     private string _operation = string.Empty;
     private char COMMA = ',';
 
     public MainWindow()
     {
         InitializeComponent();
+        _history = (TextBlock?)FindName("History");
+        LoadHistory();
     }
+
 
     private void Button_Click(object sender, RoutedEventArgs e)
     {
@@ -78,6 +82,7 @@ public partial class MainWindow : Window
                 _ => _currentValue,
             };
             Display.Text = RemoveZeros(_currentValue.ToString());
+            SaveOperation();
 
         }
         catch (Exception)
@@ -102,7 +107,7 @@ public partial class MainWindow : Window
                 _ => throw new NotImplementedException(),
             };
             Display.Text = RemoveZeros(_currentValue.ToString());
-
+            SaveOperation();
         }
         catch (Exception)
         {
@@ -112,6 +117,16 @@ public partial class MainWindow : Window
         {
             _operation = "eq";
         }
+    }
+
+    private void SaveOperation()
+    {
+        throw new NotImplementedException();
+    }
+
+    private void LoadHistory()
+    {
+        throw new NotImplementedException();
     }
 
     private string RemoveZeros(string s)

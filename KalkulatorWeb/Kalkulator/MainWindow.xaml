@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Calculator"
         mc:Ignorable="d"
-        Title="a" Height="450" Width="350">
+        Title="a" Height="450" Width="450">
     <Grid>
 
         <Grid.RowDefinitions>
@@ -22,9 +22,17 @@
             <ColumnDefinition Width="*" />
             <ColumnDefinition Width="*" />
             <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="200" />
         </Grid.ColumnDefinitions>
 
         <TextBox IsReadOnly="True" Name="Display" Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="4" HorizontalAlignment="Stretch" VerticalAlignment="Top" FontSize="32" TextAlignment="Right" Margin="10" Height="50" Width="Auto"/>
+
+        <TextBlock Name="HistoryTitle" Grid.Row="0" Grid.Column="5" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" FontSize="32" TextAlignment="Center" Margin="10" Height="50" Width="Auto">
+            <Run>
+                History
+            </Run>
+        </TextBlock>
+        <TextBlock Name="History" Grid.Row="1" Grid.Column="5" Grid.RowSpan="5" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" FontSize="16" TextAlignment="Right" Margin="10"  Width="Auto"/>
 
         <!-- Button Row 1 -->
         <Button Grid.Row="1" Grid.Column="0" FontSize="20" Click="Button_Click" DataContext="frac">
