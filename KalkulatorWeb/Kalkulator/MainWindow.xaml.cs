@@ -22,12 +22,14 @@ public partial class MainWindow : Window
     private TextBlock _history;
     private string _operation = string.Empty;
     private char COMMA = ',';
+    private HistoryDb db;
 
     public MainWindow()
     {
+        db = new HistoryDb();
         InitializeComponent();
         _history = (TextBlock?)FindName("History");
-        LoadHistory();
+        _history.Text = db.LoadHistory();
     }
 
 
