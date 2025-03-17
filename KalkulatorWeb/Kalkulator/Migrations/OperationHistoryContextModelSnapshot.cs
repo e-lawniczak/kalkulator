@@ -2,7 +2,6 @@
 using Calculator.Model;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
-using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,11 +9,9 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Calculator.Migrations
 {
     [DbContext(typeof(OperationHistoryContext))]
-    [Migration("20250317121138_init")]
-    partial class InitMigration
+    partial class OperationHistoryContextModelSnapshot : ModelSnapshot
     {
-        /// <inheritdoc />
-        protected override void BuildTargetModel(ModelBuilder modelBuilder)
+        protected override void BuildModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "9.0.3");
@@ -28,7 +25,10 @@ namespace Calculator.Migrations
                     b.Property<int>("OperatorId")
                         .HasColumnType("INTEGER");
 
-                    b.Property<decimal>("ValueA")
+                    b.Property<decimal>("Result")
+                        .HasColumnType("TEXT");
+
+                    b.Property<decimal?>("ValueA")
                         .HasColumnType("TEXT");
 
                     b.Property<decimal>("ValueB")
@@ -53,7 +53,7 @@ namespace Calculator.Migrations
 
                     b.HasKey("OperatorId");
 
-                    b.ToTable("Operator");
+                    b.ToTable("Operators");
                 });
 
             modelBuilder.Entity("Calculator.Model.HistoryEntry", b =>

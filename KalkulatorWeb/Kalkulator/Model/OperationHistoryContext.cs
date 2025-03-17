@@ -9,16 +9,18 @@ namespace Calculator.Model
 {
     class OperationHistoryContext : DbContext
     {
-        public DbSet<HistoryEntry> Operations { get; set; }
 
         public string DbPath { get; }
 
-        public OperationHistoryContext()
+        public OperationHistoryContext() : base()
         {
-            DbPath = System.IO.Path.Join("/datbase","operations.db");
+            System.IO.Directory.CreateDirectory("./database");
+            DbPath = System.IO.Path.Join("./database","operations.db");
+            Database.EnsureCreated();
         }
+        public DbSet<HistoryEntry> Operations { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder options)
-       => options.UseSqlite($"Data Source={DbPath}");
+       => options.UseSqlite( $"Data Source={DbPath}");
     }
 }

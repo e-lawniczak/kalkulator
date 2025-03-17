@@ -28,9 +28,10 @@ public partial class MainWindow : Window
     {
         db = new HistoryDb();
         InitializeComponent();
-        _history = (TextBlock?)FindName("History");
-        _history.Text = db.LoadHistory();
+        _history = (TextBlock)FindName("History");
+        FillHistory();
     }
+
 
 
     private void Button_Click(object sender, RoutedEventArgs e)
@@ -75,6 +76,8 @@ public partial class MainWindow : Window
         if (!decimal.TryParse(Display.Text, out _)) return; // if current display is ending with comma, do nothing
         try
         {
+            var tmpPrev = _previousValue;
+            var tmpCurrent = _currentValue;
             _currentValue = _operation switch
             {
                 string o when o == "+" => Add(_previousValue, _currentValue),
@@ -83,23 +86,27 @@ public partial class MainWindow : Window
                 string o when o == "/" => Divide(_previousValue, _currentValue),
                 _ => _currentValue,
             };
+            _previousValue = tmpCurrent;
             Display.Text = RemoveZeros(_currentValue.ToString());
-            SaveOperation();
+            Task.Run(() => db.SaveOperation(tmpPrev, _previousValue, _operation, _currentValue));
+            FillHistory();
+            _operation = "eq";
+
 
         }
         catch (Exception)
         {
             throw;
         }
-        finally
-        {
-            _operation = "eq";
-        }
+      
     }
     private void InPlaceOperation()
     {
         try
         {
+            var tmpPrev = _previousValue;
+            var tmpCurrent = _currentValue;
+
             _currentValue = _operation switch
             {
                 string o when o == "frac" => FractionInverse(_currentValue),
@@ -108,27 +115,27 @@ public partial class MainWindow : Window
                 string o when o == "back" => Backspace(),
                 _ => throw new NotImplementedException(),
             };
+            _previousValue = tmpCurrent;
             Display.Text = RemoveZeros(_currentValue.ToString());
-            SaveOperation();
+            if (_operation != "back")
+            {
+                Task.Run(() => db.SaveOperation(null, _previousValue, _operation, _currentValue));
+                FillHistory();
+                _operation = "eq";
+
+            }
         }
         catch (Exception)
         {
             throw;
         }
-        finally
-        {
-            _operation = "eq";
-        }
+   
     }
 
-    private void SaveOperation()
-    {
-        throw new NotImplementedException();
-    }
 
-    private void LoadHistory()
+    private async void FillHistory()
     {
-        throw new NotImplementedException();
+        _history.Text = db.LoadHistory().Result;
     }
 
     private string RemoveZeros(string s)
@@ -145,11 +152,16 @@ public partial class MainWindow : Window
 
     private decimal Backspace()
     {
+        if(Display.Text.Length <= 1)
+        {
+            Display.Text = "0";
+            return 0;
+        }
         Display.Text = RemoveZeros(Display.Text.Remove(Display.Text.Length - 1));
         bool NaN = true;
         decimal res = 0;
         NaN = !decimal.TryParse(Display.Text, out res);
-        return NaN ? 0 : res; //returns 0 to _currentValue if text is empty (not a number), or returns new value otherwise
+        return NaN ? 0 : res; //returns 0 to _currentValue if text is not a number, or returns new value otherwise
     }
 
     private decimal Sqrt(decimal a)

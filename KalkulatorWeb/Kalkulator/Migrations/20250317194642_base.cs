@@ -5,13 +5,13 @@
 namespace Calculator.Migrations
 {
     /// <inheritdoc />
-    public partial class InitMigration : Migration
+    public partial class @base : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
-                name: "Operator",
+                name: "Operators",
                 columns: table => new
                 {
                     OperatorId = table.Column<int>(type: "INTEGER", nullable: false)
@@ -20,7 +20,7 @@ namespace Calculator.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Operator", x => x.OperatorId);
+                    table.PrimaryKey("PK_Operators", x => x.OperatorId);
                 });
 
             migrationBuilder.CreateTable(
@@ -29,17 +29,18 @@ namespace Calculator.Migrations
                 {
                     HistoryEntryId = table.Column<int>(type: "INTEGER", nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
-                    OperatorId = table.Column<int>(type: "INTEGER", nullable: false),
-                    ValueA = table.Column<decimal>(type: "TEXT", nullable: false),
-                    ValueB = table.Column<decimal>(type: "TEXT", nullable: false)
+                    ValueA = table.Column<decimal>(type: "TEXT", nullable: true),
+                    ValueB = table.Column<decimal>(type: "TEXT", nullable: false),
+                    Result = table.Column<decimal>(type: "TEXT", nullable: false),
+                    OperatorId = table.Column<int>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Operations", x => x.HistoryEntryId);
                     table.ForeignKey(
-                        name: "FK_Operations_Operator_OperatorId",
+                        name: "FK_Operations_Operators_OperatorId",
                         column: x => x.OperatorId,
-                        principalTable: "Operator",
+                        principalTable: "Operators",
                         principalColumn: "OperatorId",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -57,7 +58,7 @@ namespace Calculator.Migrations
                 name: "Operations");
 
             migrationBuilder.DropTable(
-                name: "Operator");
+                name: "Operators");
         }
     }
 }
