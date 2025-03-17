@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Calculator.Migrations
 {
-    [DbContext(typeof(OperationHistory))]
+    [DbContext(typeof(OperationHistoryContext))]
     partial class OperationHistoryModelSnapshot : ModelSnapshot
     {
         protected override void BuildModel(ModelBuilder modelBuilder)

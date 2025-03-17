@@ -9,7 +9,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Calculator.Migrations
 {
-    [DbContext(typeof(OperationHistory))]
+    [DbContext(typeof(OperationHistoryContext))]
     [Migration("20250317121138_init")]
     partial class InitMigration
     {

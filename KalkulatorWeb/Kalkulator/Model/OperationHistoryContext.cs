@@ -7,13 +7,13 @@ using System.Threading.Tasks;
 
 namespace Calculator.Model
 {
-    class OperationHistory : DbContext
+    class OperationHistoryContext : DbContext
     {
         public DbSet<HistoryEntry> Operations { get; set; }
 
         public string DbPath { get; }
 
-        public OperationHistory()
+        public OperationHistoryContext()
         {
             DbPath = System.IO.Path.Join("/datbase","operations.db");
         }
