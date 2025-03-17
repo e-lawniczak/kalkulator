@@ -29,9 +29,9 @@ namespace Calculator.Migrations
                 {
                     HistoryEntryId = table.Column<int>(type: "INTEGER", nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
-                    ValueA = table.Column<decimal>(type: "TEXT", nullable: true),
-                    ValueB = table.Column<decimal>(type: "TEXT", nullable: false),
-                    Result = table.Column<decimal>(type: "TEXT", nullable: false),
+                    ValueA = table.Column<decimal>(type: "REAL", nullable: true),
+                    ValueB = table.Column<decimal>(type: "REAL", nullable: false),
+                    Result = table.Column<decimal>(type: "REAL", nullable: false),
                     OperatorId = table.Column<int>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
@@ -52,13 +52,6 @@ namespace Calculator.Migrations
                 table: "Operations",
                 column: "OperatorId");
 
-            migrationBuilder.InsertData(table: "Operators", column: "Value", value: "+");
-            migrationBuilder.InsertData(table: "Operators", column: "Value", value: "-");
-            migrationBuilder.InsertData(table: "Operators", column: "Value", value: "*");
-            migrationBuilder.InsertData(table: "Operators", column: "Value", value: "/");
-            migrationBuilder.InsertData(table: "Operators", column: "Value", value: "frac");
-            migrationBuilder.InsertData(table: "Operators", column: "Value", value: "pow");
-            migrationBuilder.InsertData(table: "Operators", column: "Value", value: "sqrt");
         }
 
         /// <inheritdoc />
